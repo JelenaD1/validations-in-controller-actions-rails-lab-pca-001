@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+  rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
+
   before_action :set_post!, only: [:show, :edit, :update]
 
   def show
@@ -8,7 +10,7 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post.update(post_params)
+    @post.update!(post_params)
 
     redirect_to post_path(@post)
   end
@@ -21,5 +23,9 @@ class PostsController < ApplicationController
 
   def set_post!
     @post = Post.find(params[:id])
+  end
+
+  def render_unprocessable_entity_response(invalid)
+    render :edit
   end
 end
